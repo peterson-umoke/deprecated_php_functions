@@ -62,7 +62,7 @@ function slh_eregi_replace($pattern, $replacement, $string)
  */
 function slh_ereg_replace($pattern, $replacement, $string)
 {
-    return preg_replace($pattern, $replacement, $string);
+    return preg_replace("/$pattern/", $replacement, $string);
 }
 
 /**
@@ -85,7 +85,7 @@ function slh_each(&$array)
  */
 function slh_split($pattern, $string)
 {
-    return preg_split($pattern, $string);
+    return preg_split("/$pattern/", $string);
 }
 
 /**
