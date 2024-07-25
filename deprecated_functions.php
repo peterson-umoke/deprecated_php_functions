@@ -23,7 +23,7 @@
  */
 function slh_ereg($pattern, $string, &$matches = null)
 {
-    return preg_match($pattern, $string, $matches);
+    return preg_match("/$pattern/", $string, $matches);
 }
 
 /**
@@ -110,7 +110,7 @@ function slh_mysql_connect($server, $username, $password)
     $mysqli = new mysqli($server, $username, $password);
 
     if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
+        die("Connection failed: " . $mysqli->connect_error . ".<br/>server: " . $server . " username: " . $username . " password: " . $password . " <br/>stack trace: <br/>" . get_stack_trace());
     }
 
     return $mysqli;
@@ -140,7 +140,8 @@ function slh_mysql_query($query, $connection)
     $result = $connection->query($query);
 
     if (!$result) {
-        die("Query failed: " . $connection->error);
+        echo "<br/>Query: " . $query . "<br/>stack trace: <br/>" . get_stack_trace();
+        die();
     }
 
     return $result;
@@ -417,4 +418,40 @@ function slh_mysql_result($result, $row, $field)
 function slh_mysql_stat($connection)
 {
     return $connection->stat();
+}
+
+/**
+ * Retrieves the current stack trace.
+ *
+ * This function returns an array containing information about the current execution stack.
+ * It includes the file, line number, function name, and arguments for each stack frame.
+ *
+ * @return array An array of stack frames, where each frame is represented as an associative array.
+ */
+function get_stack_trace()
+{
+
+    // Retrieve the stack trace
+    $backtrace = debug_backtrace();
+
+    // Format the stack trace for readability
+    $formatted_trace = [];
+    foreach ($backtrace as $trace) {
+        $formatted_trace[] = [
+            'file' => isset($trace['file']) ? $trace['file'] : null,
+            'line' => isset($trace['line']) ? $trace['line'] : null,
+            'function' => isset($trace['function']) ? $trace['function'] : null,
+            'class' => isset($trace['class']) ? $trace['class'] : null,
+            'type' => isset($trace['type']) ? $trace['type'] : null,
+        ];
+    }
+
+    $trace = $formatted_trace;
+    $where = "";
+    $traceCount = 1;
+    foreach ($trace as $entry) {
+        $where .=  $traceCount++ . ". File: " . ($entry['file'] ?? 'N/A') . " - Line: " . ($entry['line'] ?? 'N/A') . " - Function: " . ($entry['function'] ?? 'N/A') . " - Class: " . ($entry['class'] ?? 'N/A') . " - Type: " . ($entry['type'] ?? 'N/A') . "\n" . "<br/>";
+    }
+
+    return $where . "\n" . "<br/>";
 }
