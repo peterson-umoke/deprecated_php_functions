@@ -110,7 +110,10 @@ function slh_mysql_connect($server, $username, $password)
     $mysqli = new mysqli($server, $username, $password);
 
     if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error . ".<br/>server: " . $server . " username: " . $username . " password: " . $password . " <br/>stack trace: <br/>" . get_stack_trace());
+        echo "<br/>Connection failed: " . $mysqli->connect_error;
+        echo "<br/>server: " . $server . " username: " . $username . " password: " . $password;
+        echo "<br/>StackTrace: <br/>" . get_stack_trace();
+        die();
     }
 
     return $mysqli;
@@ -140,7 +143,8 @@ function slh_mysql_query($query, $connection)
     $result = $connection->query($query);
 
     if (!$result) {
-        echo "<br/>Query: " . $query . "<br/>stack trace: <br/>" . get_stack_trace();
+        echo "<br/>Query: " . $query;
+        echo "<br/>StackTrace: <br/>" . get_stack_trace();
         die();
     }
 
